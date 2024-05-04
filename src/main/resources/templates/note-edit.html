@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Note Edit</title>
+</head>
+<body>
+<h1>Edit Post</h1>
+<form method="post">
+    <input type="text" th:value="${note.title}" name="title" placeholder="Write post title" class="form-control"><br>
+    <input type="text" th:value="${note.content}" name="content" placeholder="Write post content"
+           class="form-control"><br>
+    <button type="submit" class="btn btn-success">Update</button>
+</form>
+</body>
+</html>

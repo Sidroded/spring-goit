@@ -21,6 +21,12 @@ public class Note {
         this.content = content;
     }
 
+    public Note(long id, String title, String content) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+    }
+
     private long generateRandomId() {
         NoteService noteService = new NoteService();
 
