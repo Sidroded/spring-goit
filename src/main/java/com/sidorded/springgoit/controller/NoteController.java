@@ -20,7 +20,7 @@ public class NoteController {
 
     @GetMapping("/note/list")
     public String getAllNotes(Model model) {
-        List<Note> notes = new ArrayList<>(noteService.listAll().values());
+        List<Note> notes = noteService.listAll();
         model.addAttribute( "notes", notes);
         return "note-list";
     }
