@@ -3,45 +3,40 @@ package com.sidorded.springgoit.controller;
 import com.sidorded.springgoit.entity.Note;
 import com.sidorded.springgoit.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/api/notes")
 public class NoteController {
 
     @Autowired
     private NoteService noteService;
 
-    @GetMapping("/note/list")
-    public String getAllNotes(Model model) {
-        List<Note> notes = noteService.listAll();
-        model.addAttribute( "notes", notes);
-        return "note-list";
+    @GetMapping
+    public List<Note> getAllNotes() {
+        return noteService.listAll();
     }
 
-    @PostMapping("/note/delete")
-    public String deleteNote(@RequestParam("id") Long id) {
+    @DeleteMapping("/{id}")
+    public void deleteNote(@PathVariable Long id) {
         noteService.deleteById(id);
-        return "redirect:/note/list";
     }
 
-    @GetMapping("/note/edit")
-    public String getNoteEditPage(@RequestParam("id") Long id, Model model) {
-        Note note = noteService.getById(id);
-        model.addAttribute("note", note);
-        return "note-edit";
+    @GetMapping("/{id}")
+    public Note getNoteById(@PathVariable Long id) {
+        return noteService.getById(id);
     }
 
-    @PostMapping("/note/edit")
-    public String saveEditNote(@RequestParam("id") Long id,  @RequestParam String title, @RequestParam String content) {
-        Note note = new Note(id, title, content);
+    @PutMapping("/{id}")
+    public void updateNote(@PathVariable Long id, @RequestBody Note note) {
+        note.setId(id);
         noteService.update(note);
-        return "redirect:/note/list";
+    }
+
+    @PostMapping
+    public Note createNote(@RequestBody Note note) {
+        return noteService.addNote(note);
     }
 }

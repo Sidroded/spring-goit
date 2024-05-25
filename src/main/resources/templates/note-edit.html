@@ -1,16 +1,42 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Note Edit</title>
+    <script>
+        async function fetchNote() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            const response = await fetch(`/api/notes/${id}`);
+            const note = await response.json();
+            document.querySelector('input[name="title"]').value = note.title;
+            document.querySelector('input[name="content"]').value = note.content;
+        }
+
+        async function saveNote() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            const title = document.querySelector('input[name="title"]').value;
+            const content = document.querySelector('input[name="content"]').value;
+            await fetch(`/api/notes/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, content }),
+            });
+            window.location.href = '/note-list.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchNote);
+    </script>
 </head>
 <body>
-<h1>Edit Post</h1>
-<form method="post">
-    <input type="text" th:value="${note.title}" name="title" placeholder="Write post title" class="form-control"><br>
-    <input type="text" th:value="${note.content}" name="content" placeholder="Write post content"
-           class="form-control"><br>
-    <button type="submit" class="btn btn-success">Update</button>
+<h1>Edit Note</h1>
+<form onsubmit="saveNote(); return false;">
+    <input type="text" name="title" placeholder="Write note title"><br>
+    <input type="text" name="content" placeholder="Write note content"><br>
+    <button type="submit">Update</button>
 </form>
 </body>
 </html>

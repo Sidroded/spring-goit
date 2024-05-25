@@ -1,27 +1,46 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Note List</title>
+    <script>
+        async function fetchNotes() {
+            const response = await fetch('/api/notes');
+            const notes = await response.json();
+            const noteContainer = document.querySelector('.note-container');
+            noteContainer.innerHTML = '';
+            notes.forEach(note => {
+                const noteElement = document.createElement('div');
+                noteElement.className = 'note';
+                noteElement.innerHTML = `
+                    <div class="note-header">
+                        <h3>${note.title}</h3>
+                    </div>
+                    <div class="note-body">
+                        <p>${note.content}</p>
+                    </div>
+                    <div class="note-footer">
+                        <button onclick="deleteNote(${note.id})">Delete</button>
+                        <button onclick="editNote(${note.id})">Edit</button>
+                    </div>
+                `;
+                noteContainer.appendChild(noteElement);
+            });
+        }
+
+        async function deleteNote(id) {
+            await fetch(`/api/notes/${id}`, { method: 'DELETE' });
+            fetchNotes();
+        }
+
+        function editNote(id) {
+            window.location.href = `/note-edit.html?id=${id}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchNotes);
+    </script>
 </head>
 <body>
-<div class="note-container">
-    <div th:each="el : ${notes}" class="notes">
-        <div class="note-header">
-            <h3 class="post-title-text" th:text="${el.title}"/>
-        </div>
-
-        <div class="note-body">
-            <p class="note-content" th:text="${el.content}"/>
-        </div>
-
-        <div class="post-footer">
-            <form th:action="@{/note/delete(id=${el.id})}" method="post">
-                <button type="submit">Delete</button>
-            </form>
-            <a class="edit-note" th:href="'/note/edit?id=' + ${el.id}">Edit</a>
-        </div>
-    </div>
-</div>
+<div class="note-container"></div>
 </body>
 </html>
